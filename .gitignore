@@ -1,0 +1,5 @@
+config/config.yml
+.env
+config/config.yml.prod
+config/private.pem
+config/public.key
