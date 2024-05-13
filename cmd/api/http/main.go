@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.LoadAppConfig()
+	cfg, err := config.LoadConfig("config/config.yml")
 	if err != nil {
 		panic(err)
 	}

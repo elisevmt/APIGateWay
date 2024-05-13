@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"strings"
+	//"strings"
 	"time"
 
 	"APIGateWay/internal/proxy"
@@ -54,30 +54,21 @@ func (p *proxyHTTPHadnler) Proxy() fiber.Handler {
 			return err
 		}
 		defer p.proxyUC.DecreaseLoad(instance.Url)
-		body := c.Body()
+		//body := c.Body()
 		if len(queryString) != 0 {
 			finalUrl = *instance.Url + "/" + subURL + "?" + queryString
 		} else {
 			finalUrl = *instance.Url + "/" + subURL
 		}
 		err = fiber_proxy.Do(c, finalUrl, p.cli)
+		fmt.Println("url", finalUrl)
 		if err != nil {
 			if serviceID == 1{
 				go p.gl.SendLog(GL.LEVEL_ERROR, err.Error(), fmt.Sprintf("TRON FATAL ERROR %s\nproxy url: %s", subURL, finalUrl))
 			} 
 			return err
 		}
-		response := c.Response()
-		if serviceID == 1 && response.StatusCode() != 200 {
-			if strings.Contains(subURL, "broadcasttransaction") || strings.Contains(subURL, "triggersmartcontract") {
-				go p.gl.SendLog(GL.LEVEL_ERROR, string(response.Body()), fmt.Sprintf("TRON WITHDRAWAL ERROR %s\nBody: %s\nStatus code: %d", subURL, string(c.Body()), response.StatusCode()))
-			}
-			go p.gl.SendLog(GL.LEVEL_WARNING, string(response.Body()), fmt.Sprintf("WARNING %s\nStatus code: %d\nProxy: %s", subURL, response.StatusCode(), finalUrl))
-		} else if serviceID == 1 {
-			if strings.Contains(subURL, "broadcasttransaction") || strings.Contains(subURL, "triggersmartcontract") {
-				go p.gl.SendLog(GL.LEVEL_INFO, string(response.Body()), fmt.Sprintf("TRON WITHDRAWAL %s \nBody: %s\nBody: %s", subURL, string(c.Body()) ,string(body)))
-			}
-		} 
+		//response := c.Response()
 		return nil
 	}
 }
