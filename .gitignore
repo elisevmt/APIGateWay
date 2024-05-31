@@ -1,3 +1,4 @@
+.idea
 config/config.yml
 .env
 config/config.yml.prod
